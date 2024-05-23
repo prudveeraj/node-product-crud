@@ -3,9 +3,15 @@ const { getDb } = require('./dbService');
 
 const createUser = async (user) => {
     const db = await getDb();
-    const result = await db.collection('users').insertOne(user);
+    const email = user.email
+    const user_exists = await db.collection('users').findOne({ email });
+    if(!user_exists) {
+        const result = await db.collection('users').insertOne(user);
+        return {"message": "User created successfully", "data": result}
+    } else {
+        return {"message": "User already exists"}
+    }
     // console.log(result);
-    return result
 };
 
 const getUserByEmail = async (email) => {
